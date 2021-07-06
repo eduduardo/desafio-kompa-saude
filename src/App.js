@@ -10,7 +10,7 @@ const App = () => (
       alignItems: 'center',
       backgroundColor: '#fff',
     }}>
-    <Text>KompaSaude</Text>
+    <Text>Kompa Saude</Text>
   </View>
 );
 

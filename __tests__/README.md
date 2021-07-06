@@ -1,0 +1,1 @@
+All tests is inside src using __tests__
