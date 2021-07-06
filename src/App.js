@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Text, View } from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
 
 const App = () => (
   <View
@@ -11,6 +12,7 @@ const App = () => (
       backgroundColor: '#fff',
     }}>
     <Text>Kompa Saude</Text>
+    <Feather name="star" />
   </View>
 );
 
