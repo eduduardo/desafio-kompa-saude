@@ -7,13 +7,17 @@ import rootReducer from '../reducers';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['medicalRecords']
+  whitelist: ['medicalRecords'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export default () => {
-  const store = createStore(persistedReducer, compose(applyMiddleware(thunk)));
+export default initialState => {
+  const store = createStore(
+    persistedReducer,
+    initialState,
+    compose(applyMiddleware(thunk)),
+  );
 
   const persistor = persistStore(store);
   return { store, persistor };

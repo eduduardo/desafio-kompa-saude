@@ -5,6 +5,10 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 import NewMedicalRecord from '../NewMedicalRecord';
 
+import MockAdapter from 'axios-mock-adapter';
+import { axiosInstance } from '../../common/request';
+const mockApi = new MockAdapter(axiosInstance);
+
 describe('new medical records test suite', () => {
   const initialState = {
     medicalInfos: {
@@ -32,7 +36,7 @@ describe('new medical records test suite', () => {
   };
   const testingStore = makeTestStore(initialState);
   const mockNavigate = jest.fn();
-  const mocksetOptions = jest.fn();
+  const mockGoBack = jest.fn();
 
   const setup = () => {
     const utils = renderWithRedux(<NewMedicalRecord />, {
@@ -46,7 +50,7 @@ describe('new medical records test suite', () => {
   beforeEach(() => {
     useNavigation.mockImplementation(() => ({
       navigate: mockNavigate,
-      setOptions: mocksetOptions,
+      goBack: mockGoBack,
     }));
   });
 
@@ -56,23 +60,25 @@ describe('new medical records test suite', () => {
     expect(getByText(/Salvar/i)).toBeTruthy();
   });
 
-  // test('user can select complaint', async () => {
-  //   const { getAllByText, getByText, getByTestId, debug } = setup();
+  test('user can select complaint', async () => {
+    const { getAllByText } = setup();
 
-  //   const complaintSelect = getAllByText(/Selecione/)[0];
+    const complaintSelect = getAllByText(/Dor nas costas/)[0];
 
-  //   fireEvent.press(complaintSelect.parent);
+    fireEvent.press(complaintSelect);
 
-  //   await waitFor(() => expect(getAllByText(/Dor nas costas/)).toBeTruthy());
+    await waitFor(() => expect(getAllByText(/Dor nas costas/).length).toBe(2));
+  });
 
-  //   debug();
-  // });
+  test('user can select illnesses', async () => {
+    const { getAllByText } = setup();
 
-  // test('user can select illnesses', async () => {
-  //   const { getByText } = setup();
+    const complaintSelect = getAllByText(/Diabetes/)[0];
 
-  //   await waitFor(() => expect(getByText(/Diabetes/)).toBeTruthy());
-  // });
+    fireEvent.press(complaintSelect);
+
+    await waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
+  });
 
   test('user type history', () => {
     const { getByPlaceholderText } = setup();
@@ -90,29 +96,51 @@ describe('new medical records test suite', () => {
     expect(getByText(/Qual seria sua queixa principal\?/i)).toBeTruthy();
     expect(
       getByText(
-        /O histórico deve ter o mínimo de 10 caracteres e máximo de 1000./i,
+        /O histórico deve ter o mínimo de 10 caracteres e máximo de 1000/i,
       ),
     ).toBeTruthy();
   });
 
-  // test('if form valid, no message is showed and user is redirect back to home', () => {
-  //   const { getByText, getByPlaceholderText } = renderWithRedux(
-  //     <NewMedicalRecord />,
-  //     {
-  //       store: testingStore,
-  //     },
-  //   );
+  test('if form valid, no error messages displayed and user is redirect back to home', async () => {
+    const record = {
+      queixa: { id: 1, label: 'Vômito' },
+      created_at: '2021-07-07T11:03:23.225Z',
+      historico: 'Prontuario Dois',
+      _id: 'HQmt5yaE1ywD5uEM',
+      doencas: [
+        {
+          label: 'Diabetes',
+          id: 1,
+        },
+      ],
+    };
+    mockApi.onPost('/prontuario').replyOnce(200, record);
 
-  //   const input = getByPlaceholderText(/Digite/);
-  //   fireEvent.changeText(input, 'Um histórico teste');
+    const { getByText, getAllByText, getByPlaceholderText, queryByText } =
+      renderWithRedux(<NewMedicalRecord />, {
+        store: testingStore,
+      });
 
-  //   fireEvent.press(getByText(/Salvar/));
+    const complaintSelect = getAllByText(/Dor nas costas/)[0];
+    fireEvent.press(complaintSelect);
 
-  //   expect(getByText(/Qual seria sua queixa principal\?/i)).toBeFalsy();
-  //   expect(
-  //     getByText(
-  //       /O histórico deve ter o mínimo de 10 caracteres e máximo de 1000./i,
-  //     ),
-  //   ).toBeFalsy();
-  // });
+    const illenessSelect = getAllByText(/Diabetes/)[0];
+    fireEvent.press(illenessSelect);
+
+    await waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
+
+    const input = getByPlaceholderText(/Digite/);
+    fireEvent.changeText(input, 'Um histórico teste');
+
+    fireEvent.press(getByText(/Salvar/));
+
+    expect(queryByText(/Qual seria sua queixa principal/)).toBeNull();
+    expect(
+      queryByText(
+        /O histórico deve ter o mínimo de 10 caracteres e máximo de 1000/,
+      ),
+    ).toBeNull();
+
+    await waitFor(() => expect(mockGoBack).toHaveBeenCalledTimes(1));
+  });
 });

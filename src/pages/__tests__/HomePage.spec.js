@@ -78,13 +78,14 @@ describe('home page test suite', () => {
         ],
       },
     };
+
     const { getByText, getAllByText } = renderWithRedux(<HomePage />, {
       store: makeTestStore(initialState),
     });
 
-    waitFor(() => expect(getByText(/Prontuario Um/)).toBeTruthy());
-    waitFor(() => expect(getByText(/Prontuario Dois/)).toBeTruthy());
-    waitFor(() => expect(getByText(/JUL/).length).toBe(2));
-    waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
+    await waitFor(() => expect(getByText(/Prontuario Um/)).toBeTruthy());
+    await waitFor(() => expect(getByText(/Prontuario Dois/)).toBeTruthy());
+    await waitFor(() => expect(getAllByText(/JUL/).length).toBe(2));
+    await waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
   });
 });
