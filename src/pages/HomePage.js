@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
-import { FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Text, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
 import MedicalRecord from '../components/MedicalRecord';
 import fonts from '../common/fonts';
 import colors from '../common/colors';
+import { getComplaints, getIllnesses, testAPI } from '../actions/medicalInfos';
+// import Toast from 'react-native-simple-toast';
+import { useNavigation } from '@react-navigation/native';
+
+const CARD_HEIGHT = 100;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    paddingHorizontal: 20,
+    paddingBottom: 80,
   },
   empty: {
     fontSize: fonts.size.big,
@@ -18,22 +27,44 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderPokemonCard = ({ item, index }) => <MedicalRecord {...item} />;
+const renderMedicalRecord = ({ item, index }) => <MedicalRecord {...item} />;
 const medialRecordKeyExtractor = item => `medical-${item.id}`;
-const loader = <Loader />;
-const CARD_HEIGHT = 100;
 
+const loader = <Loader />;
 const emptyList = (
   <Text style={styles.empty}>Nenhum prontuário cadastrado.</Text>
 );
 
-const HomePage = ({ navigation }) => {
+const HomePage = () => {
   const [loading, setLoading] = useState(true);
-  const medicalRecords2 = useSelector(
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    testAPI().catch(() =>
+      Toast.show('O serviço está indisponível. Tente novamente mais tarde'),
+    );
+
+    dispatch(getIllnesses());
+    dispatch(getComplaints());
+
+    if (process.env.JEST_WORKER_ID === undefined) {
+      setTimeout(() => setLoading(false), 1000); // fake loading for the awesome loading animation appear ;)
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const medicalRecords = useSelector(
     state => state.medicalRecords.medicalRecords,
   );
 
-  const medicalRecords = [{id: 1, 'text': 1}];
+  const newRecordButton = (
+    <Button
+      content="Adicionar novo prontuário"
+      onPress={() => handleCreateNewRecord()}
+    />
+  );
 
   const handleCreateNewRecord = () => {
     navigation.navigate('NewMedicalRecord');
@@ -41,28 +72,20 @@ const HomePage = ({ navigation }) => {
 
   return (
     <FlatList
-      keyboardDismissMode="on-drag"
       style={styles.container}
-      contentContainerStyle={{ paddingHorizontal: 20 }}
+      contentContainerStyle={styles.content}
+      data={medicalRecords}
       showsVerticalScrollIndicator={false}
+      ListHeaderComponent={loading && loader}
+      ListEmptyComponent={!loading && emptyList}
+      ListFooterComponent={newRecordButton}
+      renderItem={renderMedicalRecord}
+      keyExtractor={medialRecordKeyExtractor}
       getItemLayout={(data, index) => ({
         length: CARD_HEIGHT,
         offset: CARD_HEIGHT * index,
         index,
       })}
-      ListEmptyComponent={loading ? loader : emptyList}
-      ListFooterComponent={() => (
-        <Button
-          content="Adicionar novo prontuário"
-          onPress={() => handleCreateNewRecord()}
-        />
-      )}
-      data={medicalRecords}
-      renderItem={renderPokemonCard}
-      keyExtractor={medialRecordKeyExtractor}
-      refreshControl={
-        <RefreshControl refreshing={false} onRefresh={() => resetList()} />
-      }
     />
   );
 };

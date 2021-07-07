@@ -8,11 +8,10 @@ const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 describe('medical records reducers suite', () => {
-  const initialState = {
-    medicalRecords: [],
-  };
-
   test('initial medical records reducer', () => {
+    const initialState = {
+      medicalRecords: [],
+    };
     expect(medicalRecords(undefined, {})).toEqual(initialState);
   });
 });

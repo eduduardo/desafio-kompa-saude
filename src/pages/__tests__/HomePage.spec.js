@@ -17,22 +17,74 @@ describe('home page test suite', () => {
     }));
   });
 
-  test('renders correctly the HomePage Text', () => {
-    const { getByText } = renderWithRedux(<HomePage />, {
+  const setup = () => {
+    const utils = renderWithRedux(<HomePage />, {
       store: testingStore,
     });
+    return {
+      ...utils,
+    };
+  };
+
+  test('renders correctly the home page', () => {
+    const { getByText } = setup();
 
     expect(getByText(/Adicionar novo prontuário/i)).toBeTruthy();
   });
 
   test('user can go to create a new medical record', async () => {
-    const { getByText } = renderWithRedux(<HomePage />, {
-      store: testingStore,
-    });
+    const { getByText } = setup();
 
     fireEvent.press(getByText('Adicionar novo prontuário'));
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith('NewMedicalRecord');
+  });
+
+  test('user see empty message', async () => {
+    const { getByText } = setup();
+
+    expect(getByText(/Nenhum prontuário cadastrado/)).toBeTruthy();
+  });
+
+  test('user see multiple records', async () => {
+    const initialState = {
+      medicalRecords: {
+        medicalRecords: [
+          {
+            complaint: { id: 2, label: 'Dor de cabeça' },
+            date: '2021-07-07T11:04:34.704Z',
+            history: 'Prontuario Um',
+            id: 'UtyiXZInYv4i15qa',
+            illnesses: [
+              {
+                label: 'Diabetes',
+                id: 1,
+              },
+            ],
+          },
+          {
+            complaint: { id: 1, label: 'Vômito' },
+            date: '2021-07-07T11:03:23.225Z',
+            history: 'Prontuario Dois',
+            id: 'HQmt5yaE1ywD5uEM',
+            illnesses: [
+              {
+                label: 'Diabetes',
+                id: 1,
+              },
+            ],
+          },
+        ],
+      },
+    };
+    const { getByText, getAllByText } = renderWithRedux(<HomePage />, {
+      store: makeTestStore(initialState),
+    });
+
+    waitFor(() => expect(getByText(/Prontuario Um/)).toBeTruthy());
+    waitFor(() => expect(getByText(/Prontuario Dois/)).toBeTruthy());
+    waitFor(() => expect(getByText(/JUL/).length).toBe(2));
+    waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
   });
 });

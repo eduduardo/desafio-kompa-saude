@@ -81,19 +81,30 @@ const styles = StyleSheet.create({
   },
 });
 
-const MedicalRecord = () => {
-  const illnesses = [{ text: 'diabetes' }, { text: 'aaa' }];
+const formatHour = number => (number < 10 ? `0${number}` : number);
+
+const MedicalRecord = ({ complaint, illnesses, history, date }) => {
+  date = new Date(date);
+
   return (
     <View style={styles.container}>
       <View style={styles.time}>
-        <Text style={[styles.timeText, { fontWeight: 'bold' }]}>24</Text>
-        <Text style={[styles.timeText, { fontSize: 16 }]}>AGO</Text>
-        <Text style={[styles.timeText, { fontSize: 12 }]}>2020</Text>
+        <Text style={[styles.timeText, { fontWeight: 'bold' }]}>
+          {date.getDate()}
+        </Text>
+        <Text style={[styles.timeText, { fontSize: 16 }]}>
+          {date.toLocaleString('pt-BR', { month: 'short' }).toUpperCase()}
+        </Text>
+        <Text style={[styles.timeText, { fontSize: 12 }]}>
+          {date.getFullYear()}
+        </Text>
       </View>
       <View style={styles.card}>
         <View style={styles.titleContainer}>
           <Feather name="clock" size={28} color={colors.white} />
-          <Text style={styles.titleTime}>18:41</Text>
+          <Text style={styles.titleTime}>{`${formatHour(
+            date.getHours(),
+          )}:${formatHour(date.getMinutes())}`}</Text>
         </View>
         <View style={styles.subTitleContainer}>
           <Text style={styles.subTitle}>Anamnese</Text>
@@ -101,19 +112,19 @@ const MedicalRecord = () => {
 
         <View style={styles.cardBody}>
           <Text style={styles.labelText}>Queixa Principal</Text>
-          <Text>Vomito</Text>
+          <Text>{complaint.label}</Text>
 
           <Text style={styles.labelText}>Doenças Adulto</Text>
           <View style={styles.illnesses}>
             {illnesses.map(illness => (
               <View style={styles.tag}>
-                <Text>{illness.text}</Text>
+                <Text>{illness.label}</Text>
               </View>
             ))}
           </View>
 
           <Text style={styles.labelText}>Histórico da moléstia</Text>
-          <Text>Fortes dores de cabeça há uma semana.</Text>
+          <Text>{history}</Text>
         </View>
       </View>
     </View>

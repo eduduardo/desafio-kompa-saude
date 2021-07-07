@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const Button = ({ content, children, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={styles.container}>
+const Button = ({ content, children, onPress, style }) => (
+  <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
     {typeof content === 'string' ? (
       <Text style={styles.contentText}>{content}</Text>
     ) : (

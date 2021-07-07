@@ -6,7 +6,7 @@ import kompa from '../../assets/kompa-icon.png';
 const LOADER_SIZE = 80;
 
 const styles = StyleSheet.create({
-  pokeball: {
+  loader: {
     width: LOADER_SIZE,
     height: LOADER_SIZE,
     marginVertical: 10,
@@ -39,7 +39,7 @@ const Loader = () => {
       source={kompa}
       style={{
         transform: [{ rotate: spinAnimationRotate }],
-        ...styles.pokeball,
+        ...styles.loader,
       }}
     />
   );
