@@ -73,9 +73,9 @@ describe('new medical records test suite', () => {
   test('user can select illnesses', async () => {
     const { getAllByText } = setup();
 
-    const complaintSelect = getAllByText(/Diabetes/)[0];
+    const illenessSelect = getAllByText(/Diabetes/)[0];
 
-    fireEvent.press(complaintSelect);
+    fireEvent.press(illenessSelect);
 
     await waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
   });
@@ -126,8 +126,6 @@ describe('new medical records test suite', () => {
 
     const illenessSelect = getAllByText(/Diabetes/)[0];
     fireEvent.press(illenessSelect);
-
-    await waitFor(() => expect(getAllByText(/Diabetes/).length).toBe(2));
 
     const input = getByPlaceholderText(/Digite/);
     fireEvent.changeText(input, 'Um histórico teste');

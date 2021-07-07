@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
 
   error: {
     color: colors.primary,
-    fontSize: 12,
+    fontSize: fonts.size.small,
     marginTop: 5,
   },
   errorBorder: {

@@ -6,20 +6,17 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 
 describe('home page test suite', () => {
-  const testingStore = makeTestStore();
   const mockNavigate = jest.fn();
-  const mocksetOptions = jest.fn();
 
   beforeEach(() => {
     useNavigation.mockImplementation(() => ({
       navigate: mockNavigate,
-      setOptions: mocksetOptions,
     }));
   });
 
-  const setup = () => {
+  const setup = (initialState) => {
     const utils = renderWithRedux(<HomePage />, {
-      store: testingStore,
+      store: makeTestStore(initialState),
     });
     return {
       ...utils,
@@ -79,9 +76,7 @@ describe('home page test suite', () => {
       },
     };
 
-    const { getByText, getAllByText } = renderWithRedux(<HomePage />, {
-      store: makeTestStore(initialState),
-    });
+    const { getByText, getAllByText } = setup(initialState);
 
     await waitFor(() => expect(getByText(/Prontuario Um/)).toBeTruthy());
     await waitFor(() => expect(getByText(/Prontuario Dois/)).toBeTruthy());
