@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Keyboard,
 } from 'react-native';
 import colors from '../common/colors';
 import fonts from '../common/fonts';
@@ -16,8 +17,11 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import Feather from 'react-native-vector-icons/Feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { createRecord } from '../actions/medicalRecord';
-//import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-simple-toast';
 import { useNavigation } from '@react-navigation/native';
+
+const MIN_HISTORY_LENGTH = 10;
+const MAX_HISTORY_LENGTH = 1000;
 
 DropDownPicker.addTranslation('pt-BR', {
   PLACEHOLDER: 'Selecione...',
@@ -28,9 +32,8 @@ DropDownPicker.addTranslation('pt-BR', {
 DropDownPicker.setLanguage('pt-BR');
 
 const styles = StyleSheet.create({
-  container: {},
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderRadius: 5,
     overflow: 'hidden',
     marginHorizontal: 10,
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   label: {
-    fontWeight: '600',
+    fontWeight: fonts.weight.semibold,
     fontSize: fonts.size.small,
     marginTop: 10,
     marginBottom: 10,
@@ -61,7 +64,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20,
     backgroundColor: colors.lightGray,
-    minHeight: 100,
+    minHeight: 150,
+    lineHeight: 22,
   },
 
   illnesses: {
@@ -79,10 +83,15 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     flexDirection: 'row',
   },
+
   error: {
-    color: 'red',
+    color: colors.primary,
     fontSize: 12,
     marginTop: 5,
+  },
+  errorBorder: {
+    borderColor: colors.primary,
+    borderWidth: 1,
   },
 
   picker: {
@@ -92,6 +101,10 @@ const styles = StyleSheet.create({
   pickerDropdown: {
     borderColor: colors.gray,
     backgroundColor: colors.lightGray,
+  },
+
+  submitButton: {
+    marginTop: 15,
   },
 });
 
@@ -116,7 +129,7 @@ const FieldInput = ({
         setValue={setValue}
         zIndex={zIndex}
         multiple={multiple}
-        style={styles.picker}
+        style={[styles.picker, error && styles.errorBorder]}
         dropDownContainerStyle={styles.pickerDropdown}
         items={items.map(item => ({ ...item, value: item.id }))}
       />
@@ -168,10 +181,13 @@ const NewMedicalRecord = () => {
       setError('complaint', null);
     }
 
-    if (history.length < 10 || history.length > 1000) {
+    if (
+      history.length < MIN_HISTORY_LENGTH ||
+      history.length > MAX_HISTORY_LENGTH
+    ) {
       setError(
         'history',
-        'O histórico deve ter o mínimo de 10 caracteres e máximo de 1000.',
+        `O histórico deve ter o mínimo de ${MIN_HISTORY_LENGTH} caracteres e máximo de ${MAX_HISTORY_LENGTH}.`,
       );
     } else {
       setError('history', null);
@@ -200,7 +216,28 @@ const NewMedicalRecord = () => {
         );
       })
       .finally(() => setLoading(false));
-  }, [dispatch, complaintSelected, illnessesSelected, history]);
+  }, [
+    complaintSelected,
+    illnessesSelected,
+    history,
+    dispatch,
+    setError,
+    navigation,
+  ]);
+
+  useEffect(() => {
+    if (complaintSelected !== null) {
+      setError('complaint', null);
+    }
+
+    if (
+      history.length > MIN_HISTORY_LENGTH &&
+      history.length < MAX_HISTORY_LENGTH
+    ) {
+      setError('history', null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [complaintSelected, history]);
 
   return (
     <ScrollView>
@@ -243,26 +280,29 @@ const NewMedicalRecord = () => {
             </>
           )}
 
-          <View>
+          <>
             <Text style={styles.label}>Histórico da Moléstia</Text>
             <TextInput
               placeholder="Digite..."
               placeholderTextColor={colors.gray}
               numberOfLines={5}
+              maxLength={MAX_HISTORY_LENGTH}
               multiline
-              style={styles.textarea}
+              style={[styles.textarea, errors.history && styles.errorBorder]}
+              returnKeyType="done"
+              onSubmitEditing={() => Keyboard.dismiss()}
               value={history}
               onChangeText={value => setHistory(value)}
             />
             {errors.history && (
               <Text style={styles.error}>{errors.history}</Text>
             )}
-          </View>
+          </>
 
           <Button
             content={!loading && 'Salvar'}
             onPress={() => handleSubmit()}
-            style={{ marginTop: 15 }}>
+            style={styles.submitButton}>
             {loading && <ActivityIndicator color={colors.white} />}
           </Button>
         </View>

@@ -4,4 +4,10 @@ const size = {
   small: 14,
 };
 
-export default { size };
+const weight = {
+  normal: '400',
+  semibold: '600',
+  bold: '700',
+};
+
+export default { size, weight };

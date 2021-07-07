@@ -3,14 +3,12 @@ import { FlatList, Text, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
-import MedicalRecord from '../components/MedicalRecord';
+import MedicalRecord, { CARD_HEIGHT } from '../components/MedicalRecord';
 import fonts from '../common/fonts';
 import colors from '../common/colors';
 import { getComplaints, getIllnesses, testAPI } from '../actions/medicalInfos';
-// import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-simple-toast';
 import { useNavigation } from '@react-navigation/native';
-
-const CARD_HEIGHT = 100;
 
 const styles = StyleSheet.create({
   container: {
@@ -27,10 +25,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderMedicalRecord = ({ item, index }) => <MedicalRecord {...item} />;
+const renderMedicalRecord = ({ item }) => <MedicalRecord {...item} />;
 const medialRecordKeyExtractor = item => `medical-${item.id}`;
 
 const loader = <Loader />;
+
 const emptyList = (
   <Text style={styles.empty}>Nenhum prontuário cadastrado.</Text>
 );
@@ -48,8 +47,10 @@ const HomePage = () => {
     dispatch(getIllnesses());
     dispatch(getComplaints());
 
+    // fake loading for the awesome loading animation appear ;)
+    // ignoring this on jest
     if (process.env.JEST_WORKER_ID === undefined) {
-      setTimeout(() => setLoading(false), 1000); // fake loading for the awesome loading animation appear ;)
+      setTimeout(() => setLoading(false), 2000);
     } else {
       setLoading(false);
     }

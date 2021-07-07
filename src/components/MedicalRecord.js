@@ -6,6 +6,8 @@ import fonts from '../common/fonts';
 
 import Feather from 'react-native-vector-icons/Feather';
 
+export const CARD_HEIGHT = 320;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,8 +118,8 @@ const MedicalRecord = ({ complaint, illnesses, history, date }) => {
 
           <Text style={styles.labelText}>Doenças Adulto</Text>
           <View style={styles.illnesses}>
-            {illnesses.map(illness => (
-              <View style={styles.tag}>
+            {illnesses.map((illness, index) => (
+              <View style={styles.tag} key={index}>
                 <Text>{illness.label}</Text>
               </View>
             ))}

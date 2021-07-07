@@ -17,6 +17,10 @@ jest.mock('@react-navigation/native', () => ({
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
+jest.mock('react-native-simple-toast', () => ({
+  SHORT: jest.fn(),
+}));
+
 jest.mock('@react-navigation/stack', () => ({
   ...jest.requireActual('@react-navigation/stack'),
 }));
