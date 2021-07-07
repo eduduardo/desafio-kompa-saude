@@ -3,12 +3,19 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import HomePage from '../pages/HomePage';
 import colors from './colors';
+import NewMedicalRecord from '../pages/NewMedicalRecord';
 
 const Stack = createStackNavigator();
 
 const commonScenes = {
   HomePage: {
     component: HomePage,
+    options: {
+      title: 'Prontuário eletrônico',
+    },
+  },
+  NewMedicalRecord: {
+    component: NewMedicalRecord,
     options: {
       title: 'Prontuário eletrônico',
     },

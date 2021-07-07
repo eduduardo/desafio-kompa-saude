@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, Text, StyleSheet, RefreshControl } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
 import Loader from '../components/Loader';
 import MedicalRecord from '../components/MedicalRecord';
@@ -28,12 +27,17 @@ const emptyList = (
   <Text style={styles.empty}>Nenhum prontuário cadastrado.</Text>
 );
 
-const HomePage = () => {
+const HomePage = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
-  const medicalRecords = useSelector(
+  const medicalRecords2 = useSelector(
     state => state.medicalRecords.medicalRecords,
   );
-  const navigation = useNavigation();
+
+  const medicalRecords = [{id: 1, 'text': 1}];
+
+  const handleCreateNewRecord = () => {
+    navigation.navigate('NewMedicalRecord');
+  };
 
   return (
     <FlatList
@@ -47,7 +51,12 @@ const HomePage = () => {
         index,
       })}
       ListEmptyComponent={loading ? loader : emptyList}
-      ListFooterComponent={() => <Button content="Adicionar novo prontuário" />}
+      ListFooterComponent={() => (
+        <Button
+          content="Adicionar novo prontuário"
+          onPress={() => handleCreateNewRecord()}
+        />
+      )}
       data={medicalRecords}
       renderItem={renderPokemonCard}
       keyExtractor={medialRecordKeyExtractor}
