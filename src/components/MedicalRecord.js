@@ -85,6 +85,23 @@ const styles = StyleSheet.create({
 
 const formatHour = number => (number < 10 ? `0${number}` : number);
 
+const monthNames = [
+  'JAN',
+  'FEV',
+  'MAR',
+  'ABR',
+  'MAI',
+  'JUN',
+  'JUL',
+  'AGO',
+  'SET',
+  'OUT',
+  'NOV',
+  'DEZ',
+];
+
+const getMonthName = date => monthNames[date.getMonth()];
+
 const MedicalRecord = ({ complaint, illnesses, history, date }) => {
   date = new Date(date);
 
@@ -95,7 +112,7 @@ const MedicalRecord = ({ complaint, illnesses, history, date }) => {
           {date.getDate()}
         </Text>
         <Text style={[styles.timeText, { fontSize: 16 }]}>
-          {date.toLocaleString('pt-BR', { month: 'short' }).toUpperCase()}
+          {getMonthName(date)}
         </Text>
         <Text style={[styles.timeText, { fontSize: 12 }]}>
           {date.getFullYear()}
