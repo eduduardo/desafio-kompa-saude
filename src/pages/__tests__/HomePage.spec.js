@@ -14,7 +14,7 @@ describe('home page test suite', () => {
     }));
   });
 
-  const setup = (initialState) => {
+  const setup = initialState => {
     const utils = renderWithRedux(<HomePage />, {
       store: makeTestStore(initialState),
     });
@@ -41,7 +41,9 @@ describe('home page test suite', () => {
   test('user see empty message', async () => {
     const { getByText } = setup();
 
-    expect(getByText(/Nenhum prontuário cadastrado/)).toBeTruthy();
+    await waitFor(() =>
+      expect(getByText(/Nenhum prontuário cadastrado/)).toBeTruthy(),
+    );
   });
 
   test('user see multiple records', async () => {

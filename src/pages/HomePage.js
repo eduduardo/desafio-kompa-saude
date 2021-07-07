@@ -60,12 +60,7 @@ const HomePage = () => {
     dispatch(getComplaints());
 
     // fake loading for the awesome loading animation appear ;)
-    // ignoring this on jest
-    if (process.env.JEST_WORKER_ID === undefined) {
-      setTimeout(() => setLoading(false), 2000);
-    } else {
-      setLoading(false);
-    }
+    setTimeout(() => setLoading(false), 2000);
   }, [netInfo]);
 
   const medicalRecords = useSelector(
