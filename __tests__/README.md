@@ -1,1 +1,1 @@
-All tests is inside src using __tests__
+All tests of this project is inside each component/script/page folder (__tests__)!

@@ -2,8 +2,12 @@ const path = require('path');
 
 module.exports = {
   preset: 'react-native',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  transformIgnorePatterns: [
+    '<rootDir>/node_modules/(react-clone-referenced-element|@react-native-community|react-navigation|@react-navigation/.*|@unimodules/.*|native-base|react-native-code-push)',
+  ],
   setupFilesAfterEnv: [
-    '@testing-library/jest-native/extend-expect',
+    './node_modules/react-native-gesture-handler/jestSetup.js',
     './jest.setup.js',
   ],
   automock: false,

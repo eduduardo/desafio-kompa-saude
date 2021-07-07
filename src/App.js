@@ -1,18 +1,20 @@
 import React from 'react';
+import { StatusBar, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import Routes from './common/routes';
+import createStore from './common/store';
 
-import { Text, View } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+const { store } = createStore();
 
 const App = () => (
-  <View
-    style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-    }}>
-    <Text>Kompa Saude</Text>
-    <Feather name="star" />
+  <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <StatusBar barStyle="dark-content" backgroundColor="#f2f2f2" />
+    <Provider store={store}>
+      <NavigationContainer>
+        <Routes />
+      </NavigationContainer>
+    </Provider>
   </View>
 );
 
