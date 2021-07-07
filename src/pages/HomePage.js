@@ -10,7 +10,6 @@ import { getComplaints, getIllnesses, testAPI } from '../actions/medicalInfos';
 import Toast from 'react-native-simple-toast';
 import { useNavigation } from '@react-navigation/native';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { API_URL } from '../common/request';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,12 +42,17 @@ const HomePage = () => {
   const netInfo = useNetInfo();
 
   useEffect(() => {
-    if (netInfo.isInternetReachable !== true) {
-      Toast.show('Ops.. você está sem conexão');
+    if (netInfo.type !== 'unknown' && netInfo.isInternetReachable === false) {
+      Toast.show(
+        'Ops.. você está desconectado, por favor verifique sua conexão',
+      );
     }
-    testAPI().catch(() =>
-      Toast.show('O serviço está indisponível. Tente novamente mais tarde'),
-    );
+
+    if (netInfo.type !== 'unknown' && netInfo.isInternetReachable === true) {
+      testAPI().catch(() =>
+        Toast.show('O serviço está indisponível. Tente novamente mais tarde'),
+      );
+    }
   }, [netInfo]);
 
   useEffect(() => {
