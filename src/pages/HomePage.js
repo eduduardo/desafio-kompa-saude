@@ -66,7 +66,7 @@ const HomePage = () => {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [netInfo]);
 
   const medicalRecords = useSelector(
     state => state.medicalRecords.medicalRecords,

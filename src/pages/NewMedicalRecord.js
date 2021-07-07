@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGray,
     minHeight: 150,
     lineHeight: 22,
+    textAlignVertical: 'top',
   },
 
   illnesses: {
@@ -129,6 +130,7 @@ const FieldInput = ({
         setValue={setValue}
         zIndex={zIndex}
         multiple={multiple}
+        listMode="SCROLLVIEW"
         style={[styles.picker, error && styles.errorBorder]}
         dropDownContainerStyle={styles.pickerDropdown}
         items={items.map(item => ({ ...item, value: item.id }))}
