@@ -1,5 +1,8 @@
 /* eslint-disable no-undef */
 import { useNavigation } from '@react-navigation/native';
+import mockRNCNetInfo from '@react-native-community/netinfo/jest/netinfo-mock.js';
+
+jest.mock('@react-native-community/netinfo', () => mockRNCNetInfo);
 
 jest.mock('@react-native-community/async-storage', () => {
   return {
@@ -19,6 +22,7 @@ jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 jest.mock('react-native-simple-toast', () => ({
   SHORT: jest.fn(),
+  show: jest.fn(),
 }));
 
 jest.mock('@react-navigation/stack', () => ({

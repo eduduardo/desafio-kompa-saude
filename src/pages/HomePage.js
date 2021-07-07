@@ -9,6 +9,8 @@ import colors from '../common/colors';
 import { getComplaints, getIllnesses, testAPI } from '../actions/medicalInfos';
 import Toast from 'react-native-simple-toast';
 import { useNavigation } from '@react-navigation/native';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { API_URL } from '../common/request';
 
 const styles = StyleSheet.create({
   container: {
@@ -38,12 +40,18 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const netInfo = useNetInfo();
 
   useEffect(() => {
+    if (netInfo.isInternetReachable !== true) {
+      Toast.show('Ops.. você está sem conexão');
+    }
     testAPI().catch(() =>
       Toast.show('O serviço está indisponível. Tente novamente mais tarde'),
     );
+  }, [netInfo]);
 
+  useEffect(() => {
     dispatch(getIllnesses());
     dispatch(getComplaints());
 
