@@ -10,6 +10,6 @@ describe('home page test suite', () => {
       store: testingStore,
     });
 
-    expect(getByText(/HomePage/i)).toBeTruthy();
+    expect(getByText(/Adicionar novo prontuário/i)).toBeTruthy();
   });
 });

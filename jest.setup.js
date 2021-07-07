@@ -6,6 +6,9 @@ jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
   useRoute: jest.fn(),
 }));
+
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+
 jest.mock('@react-navigation/stack', () => ({
   ...jest.requireActual('@react-navigation/stack'),
 }));
